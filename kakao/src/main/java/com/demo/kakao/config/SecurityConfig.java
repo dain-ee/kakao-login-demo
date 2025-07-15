@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
 // 이 클래스는 Spring 설정 클래스임을 의미. Spring이 실행될 때 이 클래스를 읽고 설정 정보 등록
+// 이 설정 정보 읽고 Secure FilterChain을 적용
 @Configuration
 // final로 선언된 변수를 자동주입하기 위한 Lombok Annotation
 // 즉, 이 클래스는 실행 시점에 CustomOAuth2UserService 객체를 알아서 받음
@@ -43,10 +44,17 @@ public class SecurityConfig {
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(customOAuth2UserService) // 사용자 정보 가져오는 클래스 등록
                 )
+                .defaultSuccessUrl("/api/user-info", true) // 로그인 성공 시 이동할 URL 지정
                 .failureHandler((request, response, exception) -> {
                     exception.printStackTrace();
                     response.sendRedirect("/login?error");
                 })
+            )
+            .logout(logout -> logout
+                    .logoutUrl("/logout") // 기본 로그아웃 경로
+                    .logoutSuccessUrl("/") // 로그아웃 후 이동할 URL
+                    .invalidateHttpSession(true) // 세션 무효화
+                    .deleteCookies("JSESSIONID") // 쿠키 삭제
             );
 
         return http.build();
