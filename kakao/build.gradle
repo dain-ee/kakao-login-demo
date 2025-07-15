@@ -1,0 +1,63 @@
+// 어떤 빌드 도구를 쓸지 선언 (Spring Boot + Java + 의존성 관리)
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.3'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+// Maven 그룹 ID 및 버전
+group = 'com.demo'
+version = '0.0.1-SNAPSHOT'
+
+// Java 21 사용 명시
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+// Lombok 등의 어노테이션 프로세서를 컴파일 전용으로만 사용하도록 구성
+// Lombok은 코드 자동 생성 도구
+// Lombok은 컴파일 시점에서만 필요한 라이브러리이기 때문에 compileOnly에만 포함시켜서 실제 애플리케이션 배포 시 포함되지 않도록 함
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+// 의존성을 어디서 받을지 결정
+repositories {
+	mavenCentral()
+}
+
+// 프로젝트가 사용하는 외부 라이브러리 명시
+dependencies {
+	// JWT 인증용 (accessToken, refreshToken 생성 시 사용)
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+	// JPA (Spring Data JPA)
+	// Java를 DB 테이블로 매핑하는 기술 ORM(Object-Relational Mapping)
+	// Hibernate는 JPA의 실제 구현체
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	// OAuth2 Client 기능 (소셜 로그인 등)
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	// Spring Security (인증/인가)
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	// 웹 기능 (REST API 등)
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	// 인메모리 DB
+	implementation 'com.h2database:h2'
+	// Lombok (Getter/Setter/Builder 자동 생성)
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	// Test용
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// JUnit 기반 테스트 플랫폼 설정
+tasks.named('test') {
+	useJUnitPlatform()
+}
