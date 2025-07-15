@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.*;
 
+// 스프링이 빈 객체로 등록해 어디서나 주입할 수 있게 함
 @Component
 public class JwtTokenProvider {
 
